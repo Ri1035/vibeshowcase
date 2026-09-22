@@ -439,6 +439,21 @@
     // renderGrid 里已处理编辑按钮
   }
 
+  /* ---------- 版本号显示（读 build 生成的 version.json） ---------- */
+  function bindVersion() {
+    const chip = $("#version-chip");
+    if (!chip) return;
+    fetch("data/version.json", { cache: "no-cache" })
+      .then((r) => r.ok ? r.json() : null)
+      .then((d) => {
+        if (d && d.version) {
+          chip.textContent = "v" + d.version;
+          chip.title = "当前版本 v" + d.version;
+        }
+      })
+      .catch(() => {});
+  }
+
   // renderGrid 依赖 adminKey 变量，闭包内可访问
   /* ---------- 启动 ---------- */
   document.addEventListener("DOMContentLoaded", () => {
@@ -448,6 +463,7 @@
     bindPreview();
     bindPagination();
     bindAdmin();
+    bindVersion();
     loadProjects(1);
   });
 })();

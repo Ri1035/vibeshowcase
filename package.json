@@ -1,6 +1,6 @@
 {
   "name": "vibeshowcase",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "汇聚 vibecoding 作品的展示站：手动录入 gh/cf 链接与描述，自动检测部署状态，D1 后端存储。",
   "type": "module",
   "private": true,
@@ -9,6 +9,8 @@
     "detect": "node scripts/detect.mjs",
     "sync": "node scripts/sync.mjs",
     "log": "node scripts/log.mjs",
+    "build": "node scripts/build.mjs",
+    "predeploy": "node scripts/build.mjs && node scripts/detect.mjs",
     "deploy": "wrangler pages deploy . --project-name vibeshowcase",
     "db:init": "wrangler d1 execute vibeshowcase --file=worker/schema.sql",
     "worker:dev": "wrangler dev --config worker/wrangler.toml"

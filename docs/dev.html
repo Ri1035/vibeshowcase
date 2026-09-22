@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="playful">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>开发者主页 · Vibecoding 创意工坊</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/themes/playful.css" />
+  <link rel="stylesheet" href="/styles/main.css" />
+  <style>
+    .dev-container { max-width: 760px; margin: 0 auto; padding: var(--space-xl) var(--space-lg) var(--space-2xl); }
+    .dev-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); flex-wrap: wrap; margin-bottom: var(--space-md); }
+    .chip-row { display: flex; gap: var(--space-xs); flex-wrap: wrap; }
+    .sec { margin-top: var(--space-xl); }
+    .sec-title { font-size: var(--fs-lg); font-weight: var(--fw-bold); display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm); }
+    .panel { background: var(--color-surface); border: 2px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-md) var(--space-lg); }
+    .kv { display: grid; grid-template-columns: 120px 1fr; gap: var(--space-sm); font-size: var(--fs-sm); }
+    .kv dt { color: var(--color-text-soft); font-weight: var(--fw-medium); }
+    .kv dd { margin: 0; }
+    .log-item, .change-item { font-size: var(--fs-sm); padding: var(--space-xs) 0; border-bottom: 1px dashed var(--color-border); }
+    .log-item:last-child, .change-item:last-child { border-bottom: none; }
+    .log-mono { font-family: var(--font-mono, monospace); font-size: 0.85em; color: var(--color-text-soft); word-break: break-all; }
+    .tag-stack { display: inline-flex; gap: var(--space-xs); flex-wrap: wrap; }
+    .pill { background: var(--color-primary-soft); color: var(--color-primary); font-size: var(--fs-xs); padding: 0.2rem 0.6rem; border-radius: var(--radius-pill); }
+    .back { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--color-primary); font-weight: var(--fw-medium); text-decoration: none; }
+    .back:hover { text-decoration: underline; }
+    .flow { display: flex; flex-direction: column; gap: var(--space-xs); font-size: var(--fs-sm); }
+    .flow-line { display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
+    .flow-node { background: var(--color-surface-2); border: 1.5px solid var(--color-border); padding: 0.3rem 0.7rem; border-radius: var(--radius-md); }
+    .flow-arrow { color: var(--color-text-faint); }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="dev-container">
+      <div class="dev-head">
+        <div>
+          <a class="back" href="/">← 返回作品集</a>
+          <h1 class="hero-title" style="margin-top:var(--space-sm);font-size:var(--fs-2xl)">开发者主页</h1>
+          <p class="hero-sub" style="margin-top:var(--space-xs)">vibecoding 创意工坊 · 构建信息、变更记录与运行日志</p>
+        </div>
+        <div class="chip-row">
+          <span class="cv-badge" id="dev-version" style="display:inline-flex;align-items:center;gap:var(--space-xs);background:var(--color-primary);color:#fff;padding:0.35rem 0.8rem;border-radius:var(--radius-pill);font-weight:var(--fw-bold);font-size:var(--fs-sm)">v…</span>
+          <span class="cv-badge" style="display:inline-flex;align-items:center;background:var(--color-surface);border:1.5px solid var(--color-border);color:var(--color-text-soft);padding:0.35rem 0.8rem;border-radius:var(--radius-pill);font-size:var(--fs-sm)">Dev</span>
+        </div>
+      </div>
+
+      <!-- 基础信息 -->
+      <section class="sec" id="sec-meta">
+        <h2 class="sec-title">📦 基础信息</h2>
+        <div class="panel">
+          <dl class="kv">
+            <dt>项目</dt><dd id="meta-name">vibeshowcase</dd>
+            <dt>当前版本</dt><dd id="meta-version">…</dd>
+            <dt>生成时间</dt><dd id="meta-time">…</dd>
+            <dt>仓库</dt><dd><a href="https://github.com/Ri1035/vibeshowcase" target="_blank" rel="noopener">github.com/Ri1035/vibeshowcase</a></dd>
+            <dt>线上地址</dt><dd><a href="https://vibeshowcase.pages.dev" target="_blank" rel="noopener">vibeshowcase.pages.dev</a></dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- 版本与变更 -->
+      <section class="sec" id="sec-changelog">
+        <h2 class="sec-title">🧱 版本记录 / 变更</h2>
+        <div class="panel">
+          <p id="change-empty" class="field-hint" hidden>暂无变更记录。</p>
+          <div id="change-list"></div>
+        </div>
+      </section>
+
+      <!-- 运行日志 -->
+      <section class="sec" id="sec-logs">
+        <h2 class="sec-title">🗒️ 最近运行日志</h2>
+        <div class="panel">
+          <p id="log-empty" class="field-hint" hidden>暂无运行日志。</p>
+          <div id="log-list"></div>
+        </div>
+      </section>
+
+      <!-- 技术栈与数据流 -->
+      <section class="sec" id="sec-stack">
+        <h2 class="sec-title">🛠️ 技术栈与数据流</h2>
+        <div class="panel">
+          <p class="field-hint" style="margin-bottom:var(--space-sm)">前端 · GitHub Pages/CF Pages 静态站；后端 · Cloudflare D1 + Worker API；存储抽象可换任意服务。</p>
+          <div class="tag-stack">
+            <span class="pill">HTML/CSS</span><span class="pill">JS (ESM)</span><span class="pill">Cloudflare Pages</span><span class="pill">Cloudflare D1</span><span class="pill">Cloudflare Workers</span><span class="pill">Git + SemVer</span><span class="pill">Node 脚本</span>
+          </div>
+          <div class="flow" style="margin-top:var(--space-md)">
+            <div class="flow-line"><span class="flow-node">🖱️ 管理表单</span><span class="flow-arrow">→</span><span class="flow-node">Worker API (鉴权 + 探活)</span><span class="flow-arrow">→</span><span class="flow-node">🛢️ Cloudflare D1</span></div>
+            <div class="flow-line"><span class="flow-node">🌐 浏览器访问</span><span class="flow-arrow">→</span><span class="flow-node">Pages 静态站</span><span class="flow-arrow">→</span><span class="flow-node">GET /api/projects?page=&amp;limit=</span></div>
+            <div class="flow-line"><span class="flow-node">⚠️ API 不可达</span><span class="flow-arrow">→</span><span class="flow-node">回退 data/projects.json</span></div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer" style="margin-top:var(--space-2xl)">
+        <div class="container">开发者主页 · 版本号与日志由 scripts/build.mjs 自动生成</div>
+      </footer>
+    </div>
+  </main>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/themeManager.js"></script>
+  <script>
+    (function () {
+      function $(s) { return document.querySelector(s); }
+      function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+      async function load() {
+        let data = null;
+        try {
+          const r = await fetch("/data/version.json", { cache: "no-cache" });
+          if (r.ok) data = await r.json();
+        } catch (e) { /* falls back to empty */ }
+        const v = (data && data.version) ? "v" + data.version : "v0.0.0";
+        $("#dev-version").textContent = v;
+        $("#meta-version").textContent = v;
+        $("#meta-name").textContent = (data && data.name) || "vibeshowcase";
+        $("#meta-time").textContent = (data && data.generatedAt) ? new Date(data.generatedAt).toLocaleString("zh-CN") : "—";
+
+        // 变更
+        const cl = (data && data.changelog) || [];
+        $("#change-empty").hidden = cl.length > 0;
+        $("#change-list").innerHTML = cl.length
+          ? cl.map((line) => `<div class="change-item"><span class="pill">变更</span> <span>${esc(line)}</span></div>`).join("")
+          : "";
+
+        // 日志
+        const lg = (data && data.recentLogs) || [];
+        $("#log-empty").hidden = lg.length > 0;
+        $("#log-list").innerHTML = lg.length
+          ? lg.map((f) => `<div class="log-item"><strong>${esc(f.file)}</strong> · ${f.entries} 条<br><span class="log-mono">${esc(f.last)}</span></div>`).join("")
+          : "";
+      }
+      if (window.VibeShowcaseTheme) window.VibeShowcaseTheme.initTheme();
+      document.addEventListener("DOMContentLoaded", load);
+      load();
+    })();
+  </script>
+</body>
+</html>
