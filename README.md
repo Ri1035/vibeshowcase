@@ -4,9 +4,11 @@
 
 ## ✨ 特性
 
-- **手动录入 + 自动检测**：填 gh 链接 / cf 链接 / 描述，脚本对 CF 地址探活，**有部署 → 在线预览**，**无部署 → GitHub 图标跳转**。
-- **Cloudflare D1 后端（地基）**：内置 Worker API（CRUD + 部署检测），存储层抽象，未来可无缝换其他存储/服务。
-- **前端数据适配器**：优先请求后端 API，失败自动回退本地 `data/projects.json`。
+- **网页管理端（录入/编辑/发布）**：点顶栏「管理」，输入密钥即可在浏览器直接添加、编辑、删除作品，保存时自动探活判定部署状态，写入 Cloudflare D1。
+- **分页浏览**：作品按每页 9 条分页展示，含页码导航，不需滚动到底。
+- **手动录入 + 自动检测**：填 gh 链接 / cf 链接 / 描述，自动对 CF 地址探活，**有部署 → 在线预览**，**无部署 → GitHub 图标跳转**。
+- **Cloudflare D1 后端**：独立 Worker API（分页 CRUD + 管理鉴权 + 部署检测），存储层抽象，未来无缝换其他存储/服务。
+- **前端数据适配器**：优先请求 D1 API，失败自动回退本地 `data/projects.json`（不白屏）。
 - **趣味插画主题 + 可换皮肤**：设计令牌收敛到 CSS 变量 + 主题注册表，换皮肤不改组件代码。
 - **透明底品牌图标**：站点头像、favicon 均使用你上传的透明底 SVG。
 - **版本管理与日志**：git + 语义化版本 + `logs/` 运行日志沉淀。
@@ -22,16 +24,32 @@
 ```
 前端读取本地 `data/projects.json`（无后端时会自动回退到它）。
 
-### 方式 B：接入 D1 后 API（推荐，为后续扩展）
+### 方式 B：D1 管理后台 API（已部署启用 ✅）
+线上已启用独立 Worker `vibeshowcase-api`（绑定 D1 库 `vibeshowcase`），前端指向它加载数据并支持网页管理。
+
+```
+# 前端配置 API 地址：编辑 js/config.js 的 API_BASE（默认已指向生产的 Worker）
+# Worker API 端点（/api/...）：
+#   GET    /api/projects?page=1&limit=9&q=关键词  分页列表
+#   POST   /api/projects [ADMIN]                  新增并自动检测部署
+#   PUT    /api/projects/:id [ADMIN]              更新
+#   DELETE /api/projects/:id [ADMIN]              删除
+#   GET    /api/admin/_verify [ADMIN]             校验管理密钥
+#   GET    /api/health /api/export                健康检查 / 导出
+```
+
+管理密钥注入（不入库、不提交仓库）：
 ```
 cd worker
-npx wrangler d1 create vibeshowcase            # 建库，复制 database_id
-# 编辑 worker/wrangler.toml 填入 database_id
-npx wrangler d1 execute vibeshowcase --file=worker/schema.sql   # 建表
-npx wrangler dev --config worker/wrangler.toml                  # 本地调试 API
-npx wrangler deploy --config worker/wrangler.toml               # 部署 Worker
+npx wrangler secret put ADMIN_KEY     # 输入密钥，例如 vs_xxxxxxxx
 ```
-部署后前端自动优先请求 `/api/projects`（D1 数据），请求失败回退本地 JSON。
+
+重新部署 Worker / 建表：
+```
+npx wrangler deploy --config worker/wrangler.toml
+npx wrangler d1 execute vibeshowcase --remote --file=worker/schema.sql   # 建表
+npx wrangler d1 execute vibeshowcase --remote --file=worker/seed.sql     # 可选：预填示例
+```
 
 ## 📝 手动录入格式（data/entries.json）
 
