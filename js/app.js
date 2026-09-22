@@ -29,102 +29,82 @@
     return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
   }
 
-  /* ---------- 数据加载：优先 D1 API，回退本地 ---------- */
-  async function loadFromApi(page, limit) {
-    const p = Math.max(1, page || 1);
-    const lim = limit || PAGE_SIZE;
-    const q = encodeURIComponent($("#search")?.value.trim() || "");
-    const url = `${API_BASE}/api/projects?page=${p}&limit=${lim}&q=${q}`;
-    const res = await fetch(url, { cache: "no-cache" });
-    if (!res.ok) throw new Error("api " + res.status);
-    return await res.json();
+  /* ---------- 数据源：静态优先 + 本地覆盖层 ----------
+     作品数据以本地 data/projects.json 为准（秒开），分页/搜索/筛选
+     全部在前端内存完成，不再每次翻页回源请求 D1。
+     D1 API 仅用于管理写操作（增/改/删）作为云端持久化；
+     手动编辑同时写入 localStorage 覆盖层，0 点刷新后依然保留。 */
+  const OVERRIDE_KEY = "vibe_manual_v1";
+  let staticCatalog = null;      // data/projects.json 全量（已合并覆盖层）
+  let manualOverrides = null;    // { id: {…} } 或 { id: {__deleted:true} }
+
+  function readManual() {
+    if (manualOverrides) return manualOverrides;
+    try { manualOverrides = JSON.parse(localStorage.getItem(OVERRIDE_KEY) || "null") || {}; }
+    catch { manualOverrides = {}; }
+    return manualOverrides;
   }
-  async function loadFromLocal() {
+  function writeManual() {
+    try { localStorage.setItem(OVERRIDE_KEY, JSON.stringify(manualOverrides)); } catch { /* ignore */ }
+  }
+
+  async function loadCatalog() {
+    if (staticCatalog) return staticCatalog;
     const res = await fetch("data/projects.json", { cache: "no-cache" });
-    if (!res.ok) throw new Error(res.status);
+    if (!res.ok) throw new Error("HTTP " + res.status);
     const data = await res.json();
-    const list = Array.isArray(data) ? data : data.projects || [];
-    return {
-      projects: list,
-      total: list.length,
-      page: 1,
-      pageSize: list.length || 1,
-      totalPages: 1,
-      source: "local",
-    };
+    const list = Array.isArray(data) ? data : (data.projects || []);
+    return applyManualOverrides(list);
+  }
+
+  // 将手动覆盖（新增/编辑/删除）应用到静态列表
+  function applyManualOverrides(list) {
+    const base = new Map(list.map((p) => [String(p.id || p.title), { ...p }]));
+    const manual = readManual();
+    for (const [id, m] of Object.entries(manual)) {
+      if (m && m.__deleted) base.delete(id);
+      else if (m && m.title) base.set(id, { ...base.get(id), ...m });
+    }
+    return [...base.values()];
   }
 
   async function loadProjects(page) {
-    // 首页始终渲染统计；有网格（作品浮层）时完整分页渲染
-    if (!hasGrid) {
-      await refreshStats();
+    const targetPage = page || meta.page || 1;
+    let full;
+    try {
+      full = await loadCatalog();
+    } catch (e) {
+      $("#grid").innerHTML = emptyState("数据加载失败：无法读取本地 data/projects.json。");
+      console.error(e);
       return;
     }
-    const targetPage = page || meta.page || 1;
-    try {
-      const d = await loadFromApi(targetPage);
-      meta = {
-        projects: d.projects || [],
-        total: d.total || 0,
-        page: d.page || 1,
-        pageSize: d.pageSize || PAGE_SIZE,
-        totalPages: d.totalPages || 1,
-      };
-      usingApi = true;
-    } catch (e) {
-      try {
-        const d = await loadFromLocal();
-        // 本地分页
-        let list = d.projects;
-        let total = list.length;
-        const q = ($("#search")?.value || "").trim().toLowerCase();
-        if (q) list = list.filter((p) => (p.title + " " + (p.description||"") + " " + (p.tags||[]).join(" ")).toLowerCase().includes(q));
-        const lim = PAGE_SIZE;
-        const pages = Math.max(1, Math.ceil(list.length / lim));
-        const cur = Math.min(targetPage, pages);
-        const start = (cur - 1) * lim;
-        meta = { projects: list.slice(start, start + lim), total, page: cur, pageSize: lim, totalPages: pages };
-        usingApi = false;
-      } catch (e2) {
-        $("#grid").innerHTML = emptyState("数据加载失败：后端 API 与本地 data/projects.json 均不可用。");
-        console.error(e2);
-        return;
-      }
-    }
-    renderStats();
+    // 搜索
+    const q = ($("#search")?.value || "").trim().toLowerCase();
+    let list = full;
+    if (q) list = list.filter((p) => (p.title + " " + (p.description || "") + " " + (p.tags || []).join(" ")).toLowerCase().includes(q));
+    // 状态筛选
+    if (activeStatus !== statusAll) list = list.filter((p) => p.status === activeStatus);
+    meta.total = list.length;
+    meta.totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+    meta.page = Math.min(Math.max(1, targetPage), meta.totalPages);
+    const start = (meta.page - 1) * PAGE_SIZE;
+    meta.projects = list.slice(start, start + PAGE_SIZE);
+    meta.totalAll = full.length;      // 未筛选的总数（统计用）
+    usingApi = false;
+    renderStats(full);
     renderFilters();
     renderGrid();
     renderPagination();
-    // 异步补全全量统计（部署/仅源码数为全站值，非当前页值）
-    refreshStats();
   }
 
-  /* ---------- 统计 ---------- */
-  function renderStats() {
-    const lastD = meta._stats || meta.projects;
-    const full = Array.isArray(lastD) ? lastD : meta.projects;
-    const deployed = full.filter((p) => p.status === "deployed").length;
-    const source = full.filter((p) => p.status === "source").length;
-    if ($("#stat-total")) $("#stat-total").textContent = meta.total;
+  /* ---------- 统计（基于全量，本地计算） ---------- */
+  function renderStats(full) {
+    const list = Array.isArray(full) ? full : meta.totalAll ? applyManualOverrides(manualOverrides || []) : meta.projects;
+    const deployed = list.filter((p) => p.status === "deployed").length;
+    const source = list.filter((p) => p.status === "source").length;
+    if ($("#stat-total")) $("#stat-total").textContent = list.length;
     if ($("#stat-deployed")) $("#stat-deployed").textContent = deployed;
     if ($("#stat-source")) $("#stat-source").textContent = source;
-  }
-
-  // 独立拉取全量用于统计（首页与列表页共用）
-  async function refreshStats() {
-    try {
-      const d = await loadFromApi(1, 200);
-      meta._stats = d.projects || [];
-      meta.total = d.total != null ? d.total : meta.total;
-      renderStats();
-    } catch (e) {
-      try {
-        const d = await loadFromLocal();
-        meta._stats = d.projects;
-        meta.total = d.total;
-        renderStats();
-      } catch (e2) { /* ignore */ }
-    }
   }
 
   /* ---------- 筛选（重新拉数据） ---------- */
@@ -501,6 +481,11 @@
       else d = await apiFetch(`${API_BASE}/api/projects`, { method: "POST", body: JSON.stringify(payload) });
       msg("#form-msg", `已保存「${d.title}」，状态：${d.status === "deployed" ? "已部署" : "仅源码"}。`);
       if (d.status === "deployed" && d.detectStatus) msg("#form-msg", `已保存并发布：在线 (HTTP ${d.detectStatus})`);
+      // 手动编辑写入本地覆盖层，0 点刷新静态度后依然保留
+      const m = readManual();
+      m[d.id || String(d.title).toLowerCase()] = { ...d, title: d.title, description: d.description, gh_url: d.gh_url, cf_url: d.cf_url, preview: d.preview, status: d.status, tags: d.tags || [], language: d.language || "" };
+      manualOverrides = m; writeManual();
+      staticCatalog = null; // 强制重算合并结果
       $("#btn-save").disabled = false;
       setTimeout(() => { closeAdmin(); loadProjects(1); }, 900);
     } catch (err) {
@@ -514,6 +499,11 @@
     if (!confirm("确定删除该作品吗？此操作不可撤销。")) return;
     try {
       await apiFetch(`${API_BASE}/api/projects/${encodeURIComponent(editingId)}`, { method: "DELETE" });
+      // 删除也写入本地覆盖层（标记删除），避免 0 点刷新时被"复活"
+      const m = readManual();
+      m[editingId] = { __deleted: true };
+      manualOverrides = m; writeManual();
+      staticCatalog = null;
       closeAdmin();
       loadProjects(1);
     } catch (err) {
