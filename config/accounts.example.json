@@ -1,0 +1,57 @@
+{
+  "_说明": "本文件定义从哪些 GitHub 账号、哪些 Cloudflare 账号聚合作品。复制为 config/accounts.json 后填写真实值。令牌放入环境变量，不要直接提交到仓库。",
+
+  "github": {
+    "accounts": [
+      {
+        "name": "主账号",
+        "username": "your-main-username",
+        "_token环境变量": "GITHUB_TOKEN_MAIN 或省略则用公开API(限流60次/小时)",
+        "tokenEnv": "GITHUB_TOKEN_MAIN"
+      },
+      {
+        "name": "副账号",
+        "username": "your-second-username",
+        "tokenEnv": "GITHUB_TOKEN_SECOND"
+      }
+    ],
+    "_筛选": "匹配规则，留空则拉取该账号全部仓库。支持 glob 风格通配符。",
+    "include": [
+      "*"
+    ],
+    "exclude": [
+      "*.github.io",
+      "*-docs",
+      "my-personal-blog"
+    ]
+  },
+
+  "cloudflare": {
+    "accounts": [
+      {
+        "name": "主力",
+        "accountId": "YOUR_CLOUDFLARE_ACCOUNT_ID",
+        "_token环境变量": "CLOUDFLARE_API_TOKEN_MAIN（需 Pages:Read + Account Read）",
+        "tokenEnv": "CLOUDFLARE_API_TOKEN_MAIN",
+        "projectsMatch": {
+          "CP_醒目功能": "可选：把 CF 项目名映射到作品标题，例如 {\"my-app\": \"我的应用\"}"
+        }
+      }
+    ],
+    "_部署谱系": "把 CF 部署记录映射回 GitHub 仓库。若 web 应用的 gh-pages/homepage 指向 CF 域，脚本会自动串联。"
+  },
+
+  "_部署标注": "自动判断：若查出 CF 有活跃部署 -> status='deployed'；否则若仓库有 homepage 或该用户另有已部署应用 -> status='deployed'；都没有 -> status='source'（仅源码）。也可在下方 overrides 手动强制。",
+  "overrides": [
+    {
+      "_匹配": "按仓库名或 CF 项目名匹配后覆盖字段。字段可选：title/desc/tags/status/preview/repo/hide",
+      "name": "my-app",
+      "title": "我的应用",
+      "desc": "用人类可读的一句话描述",
+      "tags": ["创意", "工具"],
+      "status": "deployed",
+      "preview": "https://my-app.example.com",
+      "hide": false
+    }
+  ]
+}

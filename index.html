@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="playful">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>作品集 · Vibecoding 创意工坊</title>
+  <meta name="description" content="我的 vibecoding web 应用作品集：汇聚 GitHub 仓库与 Cloudflare 部署的一站式预览站。" />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="apple-touch-icon" href="assets/logo.svg" />
+
+  <!-- 设计令牌（风格接口） -->
+  <link rel="stylesheet" href="styles/tokens.css" />
+  <!-- 主题文件（切换风格时由 themeManager 动态加载覆盖） -->
+  <link rel="stylesheet" href="styles/themes/playful.css" data-theme-file />
+  <!-- 组件主样式 -->
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+
+  <!-- 页头 -->
+  <header class="header">
+    <div class="container header-inner">
+      <a class="brand" href="#">
+        <img class="logo" src="assets/logo.svg" alt="vibecoding 创意工坊 logo" />
+        <span>vibecoding 创意工坊</span>
+      </a>
+      <div class="header-actions">
+        <button id="theme-btn" class="btn btn-ghost btn-sm">
+          <span class="icon">🎨</span><span class="btn-label">换肤</span>
+        </button>
+        <a class="btn btn-ghost btn-sm" href="README.md" target="_blank" rel="noopener">
+          <span class="icon">⭐</span><span class="btn-label">同步脚本</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主题选择浮层 -->
+  <div id="theme-panel" class="theme-popover" role="dialog" aria-label="选择主题">
+    <div class="theme-pop-head">
+      <h3>选择皮肤</h3>
+      <button class="modal-close" data-close aria-label="关闭">×</button>
+    </div>
+    <div id="theme-list" class="theme-panel"></div>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-mascot" aria-hidden="true">
+        <!-- 吉祥物插画 -->
+        <svg viewBox="0 0 120 120">
+          <ellipse cx="60" cy="106" rx="30" ry="7" fill="rgba(0,0,0,.08)"/>
+          <ellipse cx="60" cy="70" rx="34" ry="32" fill="var(--mascot-body)"/>
+          <path d="M60 48 a26 26 0 0 1 26 22 l11 -8 c-1 -8 -5 -14 -11 -18 z" fill="var(--mascot-body)"/>
+          <path d="M60 48 a26 26 0 0 0 -26 22 l-11 -8 c1 -8 5 -14 11 -18 z" fill="var(--mascot-body)"/>
+          <path d="M60 38 c-4 0 -7 2 -8 5 c1 3 5 5 8 5 c3 0 7 -2 8 -5 c-1 -3 -4 -5 -8 -5 z" fill="var(--mascot-accent)"/>
+          <circle cx="47" cy="70" r="5" fill="var(--mascot-eye)"/>
+          <circle cx="73" cy="70" r="5" fill="var(--mascot-eye)"/>
+          <circle cx="49" cy="66" r="1.6" fill="#fff"/>
+          <circle cx="75" cy="66" r="1.6" fill="#fff"/>
+          <circle cx="60" cy="82" r="7" fill="var(--mascot-cheek)" opacity=".6"/>
+          <path d="M53 88 q7 6 14 0" stroke="var(--mascot-eye)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <circle cx="60" cy="96" r="4.5" fill="var(--mascot-body)" stroke="var(--mascot-body)"/>
+        </svg>
+      </div>
+      <h1 class="hero-title">汇聚我的 <em>vibecoding</em> 作品</h1>
+      <p class="hero-sub">
+        一个站点预览所有 Web 应用，统一浏览 GitHub 源码与 Cloudflare 在线部署。
+        已部署的直接内嵌预览，仅源码的一键跳转仓库。
+      </p>
+      <div class="stats">
+        <div class="stat"><div id="stat-total" class="stat-num">0</div><div class="stat-label">全部作品</div></div>
+        <div class="stat"><div id="stat-deployed" class="stat-num">0</div><div class="stat-label">已部署上线</div></div>
+        <div class="stat"><div id="stat-source" class="stat-num">0</div><div class="stat-label">仅源码</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 作品区 -->
+  <main class="section">
+    <div class="container">
+      <div id="filters" class="filters"></div>
+      <div style="max-width:480px;margin:0 auto var(--space-lg)">
+        <input id="search" type="search" placeholder="🔍 搜索作品、标签或关键词…"
+          style="width:100%;padding:.7rem 1rem;border-radius:var(--radius-pill);border:2px solid var(--color-border);background:var(--color-surface);font-family:var(--font-sans);color:var(--color-text)" />
+      </div>
+      <div id="grid" class="grid"></div>
+    </div>
+  </main>
+
+  <!-- 预览弹窗 -->
+  <div id="backdrop" class="backdrop" role="dialog" aria-label="作品预览" aria-modal="true">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modal-title">预览</h3>
+        <button class="modal-close" data-close aria-label="关闭">×</button>
+      </div>
+      <iframe id="frame" class="modal-frame" title="作品预览" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock" referrerpolicy="no-referrer"></iframe>
+      <div class="modal-foot">
+        <button id="open-now" class="btn btn-primary btn-sm">在新窗口打开 ↗</button>
+        <span style="align-self:center;font-size:var(--fs-xs);color:var(--color-text-faint)">部分站点可能拒绝被 iframe 嵌套</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      Made with 趣味插画主题 · 数据由 sync 脚本从 GitHub + Cloudflare 聚合生成
+    </div>
+  </footer>
+
+  <script src="js/themeManager.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

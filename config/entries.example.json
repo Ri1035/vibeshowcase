@@ -1,0 +1,17 @@
+{
+  "_说明": "手动录入模式。每个条目填写：ghUrl(必填，GitHub仓库链接)、cfUrl(可选，Cloudflare部署链接)、desc(描述)。填入后运行 node scripts/detect.mjs 自动检测部署状态并生成 data/projects.json。复制本文件为 data/entries.json 使用。",
+  "projects": [
+    {
+      "ghUrl": "https://github.com/用户名/仓库名",
+      "cfUrl": "https://应用名.子域.pages.dev",
+      "desc": "用一句话描述这个 web 应用",
+      "tags": ["工具", "效率"]
+    },
+    {
+      "ghUrl": "https://github.com/用户名/另一仓库",
+      "cfUrl": "",
+      "desc": "这个还没部署，就只填 GitHub 链接，会自动显示 GitHub 图标",
+      "tags": ["创意"]
+    }
+  ]
+}

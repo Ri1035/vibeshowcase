@@ -1,0 +1,20 @@
+# 依赖与构建
+node_modules/
+dist/
+.wrangler/
+
+# 敏感凭据——绝不提交
+.env
+.env.*
+!.env.example
+
+# 运行时数据与日志
+logs/
+*.log
+data/entries.json
+
+# 系统
+.DS_Store
+Thumbs.db
+*.tmp
+.cache/

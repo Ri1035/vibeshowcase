@@ -1,0 +1,106 @@
+/* ============================================================
+   THEME · playful · 趣味插画
+   ------------------------------------------------------------
+   面向成年人的趣味插画主题：原创角色 + 鲜明配色 + 圆润造型
+   + 有分寸的轻量动效（弹性反馈、不拖慢任务）。
+   切换主题文件即可整体换风格，无需改动组件代码。
+   ============================================================ */
+
+:root[data-theme="playful"] {
+  /* 覆盖 tokens —— 更高饱和、更暖的配色 */
+  --color-bg: #fff9ef;
+  --color-surface: #ffffff;
+  --color-surface-2: #fff1dc;
+  --color-text: #2b2218;
+  --color-text-soft: #6e5c45;
+  --color-text-faint: #a49076;
+  --color-border: #f3e2c8;
+  --color-primary: #ff7a3c;
+  --color-primary-soft: #ffe2c9;
+  --color-accent: #2fb8c0;
+  --color-accent-soft: #d6f3f4;
+  --color-success: #5fb253;
+  --color-success-soft: #e0f3d9;
+  --color-warning: #efae27;
+  --color-warning-soft: #fceec9;
+  --color-danger: #e8554e;
+  --color-link: #1c7fae;
+
+  --mascot-body: #ffc94d;
+  --mascot-accent: #ff7a3c;
+  --mascot-eye: #2b2218;
+  --mascot-cheek: #ff9d8f;
+
+  /* 圆角更夸张，突出"圆润"性格 */
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 30px;
+  --radius-pill: 999px;
+
+  /* 弹性动效更明显 */
+  --ease-spring: cubic-bezier(0.34, 1.7, 0.5, 1);
+  --shadow-primary: 0 10px 24px rgba(255, 122, 60, 0.40);
+
+  /* 字体展示层可用更有个性的字体（无网络字体时回退） */
+  --font-display: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+/* ---------- 主题专属：全局插画背景点缀（SVG 数据部分） ---------- */
+:root[data-theme="playful"] body {
+  background-image:
+    radial-gradient(circle at 8% 12%, var(--color-accent-soft) 0, transparent 22%),
+    radial-gradient(circle at 92% 8%, var(--color-primary-soft) 0, transparent 24%),
+    radial-gradient(circle at 88% 90%, var(--color-warning-soft) 0, transparent 22%),
+    radial-gradient(circle at 14% 88%, var(--color-accent-soft) 0, transparent 20%);
+  background-attachment: fixed;
+}
+
+/* 吸睛要素：大标题跳出的文字阴影 */
+:root[data-theme="playful"] .hero-title em {
+  color: var(--color-primary);
+  font-style: normal;
+  position: relative;
+  display: inline-block;
+}
+:root[data-theme="playful"] .hero-title em::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  height: 0.4em;
+  background: var(--color-primary-soft);
+  z-index: -1;
+  border-radius: 8px;
+  transform: rotate(-1deg);
+}
+
+/* 卡片悬停：轻微上浮 + 弹性 */
+:root[data-theme="playful"] .card:hover {
+  transform: translateY(-6px) rotate(-0.5deg);
+  box-shadow: var(--shadow-md);
+}
+
+/* 按钮按压弹性反馈 */
+:root[data-theme="playful"] .btn:active {
+  transform: scale(0.95);
+}
+
+/* 完成状态的徽章用插画表情 */
+:root[data-theme="playful"] .badge {
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.02em;
+}
+
+/* prefers-reduced-motion 尊重用户减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme="playful"] *,
+  :root[data-theme="playful"] *::before,
+  :root[data-theme="playful"] *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  :root[data-theme="playful"] .card:hover {
+    transform: none;
+  }
+}

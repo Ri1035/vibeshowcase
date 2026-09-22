@@ -1,0 +1,33 @@
+{
+  "projects": [
+    {
+      "title": "示例：在线应用",
+      "desc": "这是一个已部署的示例 web 应用（演示预览卡片）。特点是可在站内 iframe 预览。",
+      "repo": "https://github.com/cloudflare/pages",
+      "homepage": "https://www.cloudflare.com",
+      "preview": "https://www.cloudflare.com",
+      "status": "deployed",
+      "tags": ["演示", "已部署"],
+      "account": "手动录入",
+      "accountUsername": "",
+      "language": "JavaScript",
+      "updated_at": "2026-09-22T09:00:00Z",
+      "cfUrl": "https://www.cloudflare.com"
+    },
+    {
+      "title": "示例：仅源码",
+      "desc": "这是一个仅在 GitHub 有源码、尚未部署的示例项目（演示 GitHub 图标入口）。",
+      "repo": "https://github.com/octocat/Hello-World",
+      "homepage": "",
+      "preview": "",
+      "status": "source",
+      "tags": ["演示", "仅源码"],
+      "account": "手动录入",
+      "accountUsername": "",
+      "language": "",
+      "updated_at": "2026-09-22T08:55:00Z",
+      "cfUrl": ""
+    }
+  ],
+  "_note": "占位示例数据，用于前端预览。真实数据由 node scripts/detect.mjs 根据 data/entries.json 生成。"
+}
