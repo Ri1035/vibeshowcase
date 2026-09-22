@@ -520,3 +520,161 @@ img {
   .modal-frame { min-height: 55vh; }
   .header-actions .btn .btn-label { display: none; }
 }
+
+/* ============================================================
+   分页
+   ============================================================ */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  margin-top: var(--space-xl);
+}
+.page-btn {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 0.6rem;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-snap);
+}
+.page-btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+}
+.page-btn.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.page-ellipsis { color: var(--color-text-faint); }
+
+/* 卡片内管理编辑按钮 */
+.card-admin {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -0.5rem;
+}
+.btn-admin-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: none;
+  background: var(--color-surface-2);
+  color: var(--color-text-soft);
+  font-size: var(--fs-xs);
+  font-family: var(--font-sans);
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-snap);
+}
+.btn-admin-edit:hover { color: var(--color-primary); background: var(--color-primary-soft); }
+
+/* ============================================================
+   管理弹窗
+   ============================================================ */
+.admin-modal {
+  max-width: 560px;
+}
+.admin-body {
+  padding: var(--space-lg);
+  overflow: auto;
+  max-height: 75vh;
+}
+.admin-hint {
+  color: var(--color-text-soft);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  margin: 0 0 var(--space-md);
+}
+.admin-login, .admin-tools, .admin-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.field-row {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+}
+.field-row input {
+  flex: 1;
+}
+.admin-bar {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.admin-status { font-size: var(--fs-xs); color: var(--color-success); }
+.admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
+  max-height: 300px;
+  overflow: auto;
+}
+.admin-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: 0.6rem 0.8rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-snap);
+  background: var(--color-surface);
+}
+.admin-item:hover { border-color: var(--color-primary); background: var(--color-primary-soft); }
+.admin-item-title { font-weight: var(--fw-medium); font-size: var(--fs-sm); }
+
+/* 表单 */
+.project-form { display: flex; flex-direction: column; gap: var(--space-md); }
+.field { display: flex; flex-direction: column; gap: 0.35rem; }
+.field label { font-size: var(--fs-sm); font-weight: var(--fw-medium); }
+.field .req { color: var(--color-danger); }
+.field input, .field textarea, .field-row input {
+  font-family: var(--font-sans);
+  font-size: var(--fs-md);
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.8rem;
+  width: 100%;
+  transition: border-color var(--dur-fast) var(--ease-snap);
+}
+.field input:focus, .field textarea:focus, .field-row input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+.field textarea { resize: vertical; min-height: 70px; }
+.field-hint { font-size: var(--fs-xs); color: var(--color-text-faint); margin: 0; line-height: 1.5; }
+.field-msg { font-size: var(--fs-sm); font-weight: var(--fw-medium); margin: 0; }
+.field-msg.err { color: var(--color-danger); }
+.form-actions {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: var(--space-sm);
+}
+.btn-danger {
+  background: var(--color-danger);
+  color: #fff;
+  margin-left: auto;
+}
+.btn-danger:hover { filter: brightness(1.06); }

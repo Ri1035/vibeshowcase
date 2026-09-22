@@ -11,13 +11,35 @@
  */
 export function createStore(db) {
   return {
-    async list() {
+    // 分页 + 关键词过滤。返回 { rows, total, page, pageSize }
+    async list(p = {}) {
+      const q = String(p.query || "").trim();
+      const page = Math.max(1, parseInt(p.page, 10) || 1);
+      const limit = parseInt(p.limit, 10) || 9;
+      const pageSize = Math.min(50, Math.max(1, limit));
+      const offset = (page - 1) * pageSize;
+
+      const where = q
+        ? `WHERE title LIKE ? OR description LIKE ? OR tags LIKE ?`
+        : "";
+      const binds = q
+        ? [`%${q}%`, `%${q}%`, `%${q}%`]
+        : [];
+
+      // 总数
+      const countRes = await db
+        .prepare(`SELECT COUNT(*) AS n FROM projects ${where}`)
+        .bind(...binds)
+        .first();
+      const total = (countRes ? countRes.n : 0) || 0;
+
       const { results } = await db
         .prepare(
-          `SELECT * FROM projects ORDER BY sort_order ASC, updated_at DESC`
+          `SELECT * FROM projects ${where} ORDER BY sort_order ASC, updated_at DESC LIMIT ? OFFSET ?`
         )
+        .bind(...binds, pageSize, offset)
         .all();
-      return (results || []).map(hydrate);
+      return { rows: (results || []).map(hydrate), total, page, pageSize };
     },
 
     async get(id) {
