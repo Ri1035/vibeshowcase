@@ -1,0 +1,4 @@
+# Cloudflare Pages 自定义响应头
+# 阻止搜索引擎收录本站（个人内部作品集，不希望被索引）
+/*
+  X-Robots-Tag: noindex, nofollow

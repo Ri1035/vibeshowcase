@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="playful">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>全部作品 · Vibecoding 创意工坊</title>
+  <meta name="description" content="浏览我的全部 vibecoding Web 应用：分页展示 GitHub 源码与 Cloudflare 部署。" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="apple-touch-icon" href="assets/logo.svg" />
+
+  <link rel="stylesheet" href="styles/tokens.css" />
+  <link rel="stylesheet" href="styles/themes/playful.css" data-theme-file />
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+
+  <!-- 页头 -->
+  <header class="header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <img class="logo" src="assets/logo.svg" alt="vibecoding 创意工坊 logo" />
+        <span>vibecoding 创意工坊</span>
+      </a>
+      <div class="header-actions">
+        <span id="version-chip" class="version-chip cv-badge" title="当前版本" style="display:inline-flex;align-items:center;gap:5px;background:var(--color-primary-soft);color:var(--color-primary);border:1px solid var(--color-primary);padding:0.3rem 0.7rem;border-radius:var(--radius-pill);font-size:var(--fs-xs);font-weight:var(--fw-bold)">v…</span>
+        <a class="btn btn-ghost btn-sm" href="index.html">
+          <span class="icon">🏠</span><span class="btn-label">首页</span>
+        </a>
+        <button id="theme-btn" class="btn btn-ghost btn-sm">
+          <span class="icon">🎨</span><span class="btn-label">换肤</span>
+        </button>
+        <button id="admin-btn" class="btn btn-ghost btn-sm">
+          <span class="icon">✏️</span><span class="btn-label">管理</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主题选择浮层 -->
+  <div id="theme-panel" class="theme-popover" role="dialog" aria-label="选择主题">
+    <div class="theme-pop-head">
+      <h3>选择皮肤</h3>
+      <button class="modal-close" data-close aria-label="关闭">×</button>
+    </div>
+    <div id="theme-list" class="theme-panel"></div>
+  </div>
+
+  <!-- 列表标题区 -->
+  <section class="hero hero-compact">
+    <div class="container">
+      <h1 class="hero-title">全部作品</h1>
+      <p class="hero-sub">分页浏览所有 vibecoding Web 应用，支持按关键词搜索与部署状态筛选。</p>
+      <div class="stats">
+        <div class="stat"><div id="stat-total" class="stat-num">0</div><div class="stat-label">全部作品</div></div>
+        <div class="stat"><div id="stat-deployed" class="stat-num">0</div><div class="stat-label">已部署上线</div></div>
+        <div class="stat"><div id="stat-source" class="stat-num">0</div><div class="stat-label">仅源码</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 作品区 -->
+  <main class="section">
+    <div class="container">
+      <div id="filters" class="filters"></div>
+      <div style="max-width:480px;margin:0 auto var(--space-lg)">
+        <input id="search" type="search" placeholder="🔍 搜索作品、标签或关键词…"
+          style="width:100%;padding:.7rem 1rem;border-radius:var(--radius-pill);border:2px solid var(--color-border);background:var(--color-surface);font-family:var(--font-sans);color:var(--color-text)" />
+      </div>
+      <div id="grid" class="grid"></div>
+      <nav id="pagination" class="pagination" aria-label="分页"></nav>
+    </div>
+  </main>
+
+  <!-- 预览弹窗 -->
+  <div id="backdrop" class="backdrop" role="dialog" aria-label="作品预览" aria-modal="true">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modal-title">预览</h3>
+        <button class="modal-close" data-close aria-label="关闭">×</button>
+      </div>
+      <div id="preview-gate" class="preview-gate">
+        <p class="field-hint" style="text-align:center">点击下方按钮后才加载该应用（避免自动加载大型 3D/重站点导致卡顿）。</p>
+        <button id="preview-load" class="btn btn-primary">加载预览</button>
+      </div>
+      <iframe id="frame" class="modal-frame" hidden title="作品预览" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock" referrerpolicy="no-referrer"></iframe>
+      <div class="modal-foot">
+        <button id="open-now" class="btn btn-primary btn-sm">在新窗口打开 ↗</button>
+        <span style="align-self:center;font-size:var(--fs-xs);color:var(--color-text-faint)">部分站点可能拒绝被 iframe 嵌套</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      Made with 趣味插画主题 · 数据由 D1 API 提供（含 GitHub + Cloudflare 聚合）
+    </div>
+  </footer>
+
+  <!-- 管理弹窗（登录 + 录入/编辑） -->
+  <div id="admin-modal" class="backdrop" role="dialog" aria-label="管理作品" aria-modal="true">
+    <div class="modal admin-modal">
+      <div class="modal-head">
+        <h3 id="admin-modal-title">管理作品</h3>
+        <button class="modal-close" data-admin-close aria-label="关闭">×</button>
+      </div>
+      <div class="admin-body">
+        <div id="admin-login" class="admin-login">
+          <p class="admin-hint">输入管理密钥后可录入、编辑、发布作品。密钥仅保存在浏览器。</p>
+          <div class="field-row">
+            <input id="admin-key-input" type="password" placeholder="管理密钥" />
+            <button id="admin-login-btn" class="btn btn-primary">解锁</button>
+          </div>
+          <p id="admin-login-msg" class="field-msg"></p>
+        </div>
+        <div id="admin-tools" class="admin-tools" hidden>
+          <div class="admin-bar">
+            <button id="btn-new" class="btn btn-primary btn-sm">＋ 添加作品</button>
+            <button id="btn-logout" class="btn btn-ghost btn-sm">退出管理</button>
+            <span id="admin-status" class="admin-status">已解锁（D1 在线写入）</span>
+          </div>
+          <p id="admin-list-hint" class="admin-hint">点击下方列表某条可编辑；或点击「添加作品」新增。</p>
+          <div id="admin-list" class="admin-list"></div>
+        </div>
+        <form id="project-form" class="project-form" hidden>
+          <div class="field">
+            <label for="f-title">作品名称 <b class="req">*</b></label>
+            <input id="f-title" type="text" required placeholder="如：泡泡图片工坊" />
+          </div>
+          <div class="field">
+            <label for="f-gh">GitHub 仓库链接 <b class="req">*</b></label>
+            <input id="f-gh" type="url" required placeholder="https://github.com/用户名/仓库" />
+          </div>
+          <div class="field">
+            <label for="f-cf">Cloudflare 部署链接</label>
+            <input id="f-cf" type="url" placeholder="https://你的应用.pages.dev（留空=仅源码）" />
+          </div>
+          <div class="field">
+            <label for="f-desc">描述</label>
+            <textarea id="f-desc" rows="3" placeholder="一句话描述作品。留空自动从 GitHub 拉取。"></textarea>
+          </div>
+          <div class="field">
+            <label for="f-tags">标签（逗号分隔）</label>
+            <input id="f-tags" type="text" placeholder="如：工具, 效率" />
+          </div>
+          <p class="field-hint">保存时自动检测 Cloudflare 地址是否在线：在线→"已部署"(可预览)，否则→"仅源码"(显示 GitHub 图标)。</p>
+          <p id="form-msg" class="field-msg"></p>
+          <div class="form-actions">
+            <button id="btn-cancel" type="button" class="btn btn-ghost">取消</button>
+            <button id="btn-save" type="submit" class="btn btn-primary">保存并发布</button>
+            <button id="btn-delete" type="button" class="btn btn-danger" hidden>删除此作品</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/themeManager.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

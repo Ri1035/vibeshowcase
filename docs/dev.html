@@ -62,19 +62,9 @@
 
       <!-- 版本与变更 -->
       <section class="sec" id="sec-changelog">
-        <h2 class="sec-title">🧱 版本记录 / 变更</h2>
+        <h2 class="sec-title">🧱 版本信息</h2>
         <div class="panel">
-          <p id="change-empty" class="field-hint" hidden>暂无变更记录。</p>
-          <div id="change-list"></div>
-        </div>
-      </section>
-
-      <!-- 运行日志 -->
-      <section class="sec" id="sec-logs">
-        <h2 class="sec-title">🗒️ 最近运行日志</h2>
-        <div class="panel">
-          <p id="log-empty" class="field-hint" hidden>暂无运行日志。</p>
-          <div id="log-list"></div>
+          <p class="field-hint" style="margin:0">当前版本运行于云端 D1 管理端之上。完整变更日志与运行记录见 GitHub 仓库 <code>CHANGELOG.md</code> 与 <code>logs/</code>。</p>
         </div>
       </section>
 
@@ -117,20 +107,6 @@
         $("#meta-version").textContent = v;
         $("#meta-name").textContent = (data && data.name) || "vibeshowcase";
         $("#meta-time").textContent = (data && data.generatedAt) ? new Date(data.generatedAt).toLocaleString("zh-CN") : "—";
-
-        // 变更
-        const cl = (data && data.changelog) || [];
-        $("#change-empty").hidden = cl.length > 0;
-        $("#change-list").innerHTML = cl.length
-          ? cl.map((line) => `<div class="change-item"><span class="pill">变更</span> <span>${esc(line)}</span></div>`).join("")
-          : "";
-
-        // 日志
-        const lg = (data && data.recentLogs) || [];
-        $("#log-empty").hidden = lg.length > 0;
-        $("#log-list").innerHTML = lg.length
-          ? lg.map((f) => `<div class="log-item"><strong>${esc(f.file)}</strong> · ${f.entries} 条<br><span class="log-mono">${esc(f.last)}</span></div>`).join("")
-          : "";
       }
       if (window.VibeShowcaseTheme) window.VibeShowcaseTheme.initTheme();
       document.addEventListener("DOMContentLoaded", load);

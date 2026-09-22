@@ -21,16 +21,20 @@
 
   const $ = (sel, root = document) => root.querySelector(sel);
 
+  // 页面模式：index.html 为 "home"（只统计+搜索），works.html 为 "list"
+  const isWorks = location.pathname.endsWith("works.html") || document.getElementById("grid") != null;
+
   function debounce(fn, ms = 200) {
     let t;
     return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
   }
 
   /* ---------- 数据加载：优先 D1 API，回退本地 ---------- */
-  async function loadFromApi(page) {
+  async function loadFromApi(page, limit) {
     const p = Math.max(1, page || 1);
+    const lim = limit || PAGE_SIZE;
     const q = encodeURIComponent($("#search")?.value.trim() || "");
-    const url = `${API_BASE}/api/projects?page=${p}&limit=${PAGE_SIZE}&q=${q}`;
+    const url = `${API_BASE}/api/projects?page=${p}&limit=${lim}&q=${q}`;
     const res = await fetch(url, { cache: "no-cache" });
     if (!res.ok) throw new Error("api " + res.status);
     return await res.json();
@@ -51,6 +55,12 @@
   }
 
   async function loadProjects(page) {
+    // 首页：只统计总数，不渲染卡片
+    if (!isWorks) {
+      await refreshStats();
+      return;
+    }
+    // 列表页：完整分页
     const targetPage = page || meta.page || 1;
     try {
       const d = await loadFromApi(targetPage);
@@ -65,7 +75,16 @@
     } catch (e) {
       try {
         const d = await loadFromLocal();
-        meta = { ...meta, projects: d.projects, total: d.total, page: 1, pageSize: d.pageSize, totalPages: 1 };
+        // 本地分页
+        let list = d.projects;
+        let total = list.length;
+        const q = ($("#search")?.value || "").trim().toLowerCase();
+        if (q) list = list.filter((p) => (p.title + " " + (p.description||"") + " " + (p.tags||[]).join(" ")).toLowerCase().includes(q));
+        const lim = PAGE_SIZE;
+        const pages = Math.max(1, Math.ceil(list.length / lim));
+        const cur = Math.min(targetPage, pages);
+        const start = (cur - 1) * lim;
+        meta = { projects: list.slice(start, start + lim), total, page: cur, pageSize: lim, totalPages: pages };
         usingApi = false;
       } catch (e2) {
         $("#grid").innerHTML = emptyState("数据加载失败：后端 API 与本地 data/projects.json 均不可用。");
@@ -77,15 +96,36 @@
     renderFilters();
     renderGrid();
     renderPagination();
+    // 异步补全全量统计（部署/仅源码数为全站值，非当前页值）
+    refreshStats();
   }
 
   /* ---------- 统计 ---------- */
   function renderStats() {
-    const deployed = meta.projects.filter((p) => p.status === "deployed").length;
-    const source = meta.projects.filter((p) => p.status === "source").length;
-    $("#stat-total").textContent = meta.total;
-    $("#stat-deployed").textContent = deployed;
-    $("#stat-source").textContent = source;
+    const lastD = meta._stats || meta.projects;
+    const full = Array.isArray(lastD) ? lastD : meta.projects;
+    const deployed = full.filter((p) => p.status === "deployed").length;
+    const source = full.filter((p) => p.status === "source").length;
+    if ($("#stat-total")) $("#stat-total").textContent = meta.total;
+    if ($("#stat-deployed")) $("#stat-deployed").textContent = deployed;
+    if ($("#stat-source")) $("#stat-source").textContent = source;
+  }
+
+  // 独立拉取全量用于统计（首页与列表页共用）
+  async function refreshStats() {
+    try {
+      const d = await loadFromApi(1, 200);
+      meta._stats = d.projects || [];
+      meta.total = d.total != null ? d.total : meta.total;
+      renderStats();
+    } catch (e) {
+      try {
+        const d = await loadFromLocal();
+        meta._stats = d.projects;
+        meta.total = d.total;
+        renderStats();
+      } catch (e2) { /* ignore */ }
+    }
   }
 
   /* ---------- 筛选（重新拉数据） ---------- */
@@ -170,7 +210,24 @@
   }
 
   function bindSearch() {
+    // 首页：大搜索跳转到 works.html?q=
+    if (!isWorks) {
+      const hs = $("#home-search-form");
+      const hq = $("#home-q");
+      if (hs && hq) {
+        hs.addEventListener("submit", (e) => {
+          const q = hq.value.trim();
+          e.preventDefault();
+          location.href = "works.html" + (q ? "?q=" + encodeURIComponent(q) : "");
+        });
+      }
+      return;
+    }
+    // 列表页：预填 URL 参数 ?q=
+    const urlParams = new URLSearchParams(location.search);
+    const initQ = urlParams.get("q");
     const searchBox = $("#search");
+    if (initQ && searchBox) { searchBox.value = initQ; }
     if (!searchBox) return;
     searchBox.addEventListener("input", debounce(() => loadProjects(1), 300));
   }
@@ -205,13 +262,42 @@
     });
   }
 
-  /* ---------- 预览弹窗 ---------- */
+  /* ---------- 预览弹窗（二次确认后加载，避免卡顿） ---------- */
   function bindPreview() {
     const backdrop = $("#backdrop");
     const frame = $("#frame");
+    const gate = $("#preview-gate");
+    const loadBtn = $("#preview-load");
     const modalTitle = $("#modal-title");
-    function open(url, title) { frame.src = url; modalTitle.textContent = title; backdrop.classList.add("open"); document.body.style.overflow = "hidden"; }
-    function close() { backdrop.classList.remove("open"); frame.src = "about:blank"; document.body.style.overflow = ""; }
+    let pendingUrl = "";
+
+    const showGate = () => { if (gate) { gate.hidden = false; frame.hidden = true; } };
+    const showFrame = () => { if (gate) { gate.hidden = true; frame.hidden = false; } };
+
+    function open(url, title) {
+      pendingUrl = url || "";
+      modalTitle.textContent = title;
+      // 点击预览只打开弹窗，不加载 iframe（避免自动拉取重型站点卡顿）
+      frame.removeAttribute("src"); frame.src = "about:blank";
+      showGate();
+      backdrop.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+    function activate() {
+      if (!pendingUrl) return;
+      showFrame();
+      frame.src = pendingUrl;
+      if (loadBtn) { loadBtn.textContent = "重新加载"; }
+    }
+    function close() {
+      backdrop.classList.remove("open");
+      pendingUrl = "";
+      frame.removeAttribute("src"); frame.src = "about:blank";
+      showGate();
+      document.body.style.overflow = "";
+    }
+
+    if (loadBtn) loadBtn.addEventListener("click", activate);
 
     document.addEventListener("click", (e) => {
       const card = e.target.closest(".card");
@@ -238,8 +324,8 @@
     });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") { close(); if ($("#admin-modal").classList.contains("open")) closeAdmin(); } });
     $("#open-now").addEventListener("click", () => {
-      const url = frame.src;
-      if (url && url !== "about:blank") window.open(url, "_blank", "noopener");
+      const target = pendingUrl && !frame.hidden ? frame.src : pendingUrl;
+      if (target && target !== "about:blank") window.open(target, "_blank", "noopener");
     });
   }
 
@@ -460,10 +546,13 @@
     API.initTheme();
     bindTheme();
     bindSearch();
-    bindPreview();
-    bindPagination();
-    bindAdmin();
     bindVersion();
+    // 列表页专属（index 首页无这些元素）
+    if (isWorks) {
+      bindPreview();
+      bindPagination();
+      bindAdmin();
+    }
     loadProjects(1);
   });
 })();
