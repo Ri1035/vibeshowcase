@@ -1,33 +1,234 @@
 {
   "projects": [
     {
-      "title": "示例：在线应用",
-      "desc": "这是一个已部署的示例 web 应用（演示预览卡片）。特点是可在站内 iframe 预览。",
-      "repo": "https://github.com/cloudflare/pages",
-      "homepage": "https://www.cloudflare.com",
-      "preview": "https://www.cloudflare.com",
+      "title": "泡泡图片工坊",
+      "desc": "纯本地图片工具箱：压缩到指定KB、格式转换、修改尺寸与DPI、GIF压缩。浏览器内 WebAssembly 处理，图片不上传。",
+      "repo": "https://github.com/Ri1035/photo-toolkit",
+      "homepage": "https://photo-toolkit.pages.dev",
+      "preview": "https://photo-toolkit.pages.dev",
       "status": "deployed",
-      "tags": ["演示", "已部署"],
-      "account": "手动录入",
-      "accountUsername": "",
-      "language": "JavaScript",
-      "updated_at": "2026-09-22T09:00:00Z",
-      "cfUrl": "https://www.cloudflare.com"
-    },
-    {
-      "title": "示例：仅源码",
-      "desc": "这是一个仅在 GitHub 有源码、尚未部署的示例项目（演示 GitHub 图标入口）。",
-      "repo": "https://github.com/octocat/Hello-World",
-      "homepage": "",
-      "preview": "",
-      "status": "source",
-      "tags": ["演示", "仅源码"],
+      "tags": [
+        "图片工具",
+        "WebAssembly"
+      ],
       "account": "手动录入",
       "accountUsername": "",
       "language": "",
-      "updated_at": "2026-09-22T08:55:00Z",
-      "cfUrl": ""
+      "updated_at": "2026-09-22T09:27:22.014Z",
+      "cfUrl": "https://photo-toolkit.pages.dev",
+      "detectAt": "2026-09-22T09:27:22.014Z",
+      "detectStatus": 200
+    },
+    {
+      "title": "VectorKit 矢量转换器",
+      "desc": "纯前端矢量转换器：位图⇄SVG、CMYK EPS 导出、SVG 优化压缩、去背景，全部在浏览器本地完成。",
+      "repo": "https://github.com/Ri1035/vectorkit",
+      "homepage": "https://vectorkit.pages.dev",
+      "preview": "https://vectorkit.pages.dev",
+      "status": "deployed",
+      "tags": [
+        "矢量",
+        "设计工具"
+      ],
+      "account": "手动录入",
+      "accountUsername": "",
+      "language": "",
+      "updated_at": "2026-09-22T09:27:22.996Z",
+      "cfUrl": "https://vectorkit.pages.dev",
+      "detectAt": "2026-09-22T09:27:22.996Z",
+      "detectStatus": 200
+    },
+    {
+      "title": "拼多多履约工作台",
+      "desc": "拼多多开放平台能力分析 + 履约工作台（纯前端原型 + OpenAPI 契约）。",
+      "repo": "https://github.com/Ri1035/pdd-workbench",
+      "homepage": "https://pdd-workbench-9of.pages.dev",
+      "preview": "https://pdd-workbench-9of.pages.dev",
+      "status": "deployed",
+      "tags": [
+        "拼多多",
+        "工作台"
+      ],
+      "account": "手动录入",
+      "accountUsername": "",
+      "language": "",
+      "updated_at": "2026-09-22T09:27:24.138Z",
+      "cfUrl": "https://pdd-workbench-9of.pages.dev",
+      "detectAt": "2026-09-22T09:27:24.138Z",
+      "detectStatus": 200
+    },
+    {
+      "title": "雨夜魔法街区",
+      "desc": "雨夜魔法街区街角 · 三渲二微缩三维场景（three.js 单文件 / 自由拖拽旋转缩放）。",
+      "repo": "https://github.com/Ri1035/rainy-magic-street",
+      "homepage": "https://rainy-magic-street.pages.dev",
+      "preview": "https://rainy-magic-street.pages.dev",
+      "status": "deployed",
+      "tags": [
+        "Three.js",
+        "3D",
+        "三渲二"
+      ],
+      "account": "手动录入",
+      "accountUsername": "",
+      "language": "",
+      "updated_at": "2026-09-22T09:27:25.167Z",
+      "cfUrl": "https://rainy-magic-street.pages.dev",
+      "detectAt": "2026-09-22T09:27:25.167Z",
+      "detectStatus": 200
+    },
+    {
+      "title": "雨夜便利店",
+      "desc": "雨夜便利店街角 - 三渲二微缩3D场景 (Three.js)。",
+      "repo": "https://github.com/Ri1035/rainy-convenience-store",
+      "homepage": "https://rainy-convenience-store.pages.dev",
+      "preview": "https://rainy-convenience-store.pages.dev",
+      "status": "deployed",
+      "tags": [
+        "Three.js",
+        "3D",
+        "三渲二"
+      ],
+      "account": "手动录入",
+      "accountUsername": "",
+      "language": "",
+      "updated_at": "2026-09-22T09:27:26.474Z",
+      "cfUrl": "https://rainy-convenience-store.pages.dev",
+      "detectAt": "2026-09-22T09:27:26.474Z",
+      "detectStatus": 200
+    },
+    {
+      "title": "雨夜便利店（konbini）",
+      "desc": "雨夜便利店街角 · 三渲二微缩三维场景（three.js 单文件 / 自由拖拽旋转缩放）。",
+      "repo": "https://github.com/Ri1035/rainy-konbini",
+      "homepage": "https://rainy-konbini.pages.dev",
+      "preview": "https://rainy-konbini.pages.dev",
+      "status": "deployed",
+      "tags": [
+        "Three.js",
+        "3D",
+        "三渲二"
+      ],
+      "account": "手动录入",
+      "accountUsername": "",
+      "language": "",
+      "updated_at": "2026-09-22T09:27:27.672Z",
+      "cfUrl": "https://rainy-konbini.pages.dev",
+      "detectAt": "2026-09-22T09:27:27.672Z",
+      "detectStatus": 200
+    },
+    {
+      "title": "BOX WMS 仓库管理系统",
+      "desc": "BOX WMS - 仓库管理系统 (Warehouse Management System)。",
+      "repo": "https://github.com/Ri1035/box-wms",
+      "homepage": "https://box-wms.pages.dev",
+      "preview": "https://box-wms.pages.dev",
+      "status": "deployed",
+      "tags": [
+        "WMS",
+        "管理系统"
+      ],
+      "account": "手动录入",
+      "accountUsername": "",
+      "language": "",
+      "updated_at": "2026-09-22T09:27:28.843Z",
+      "cfUrl": "https://box-wms.pages.dev",
+      "detectAt": "2026-09-22T09:27:28.843Z",
+      "detectStatus": 200
+    },
+    {
+      "title": "拼图编辑器",
+      "desc": "mergeimage.org 复刻版在线图片合并/拼图编辑器（图片多选 + 文字叠加 + 系统字体）。",
+      "repo": "https://github.com/Ri1035/pingtu",
+      "homepage": "https://pingtu-ch8.pages.dev",
+      "preview": "https://pingtu-ch8.pages.dev",
+      "status": "deployed",
+      "tags": [
+        "拼图",
+        "图片工具"
+      ],
+      "account": "手动录入",
+      "accountUsername": "",
+      "language": "",
+      "updated_at": "2026-09-22T09:27:29.972Z",
+      "cfUrl": "https://pingtu-ch8.pages.dev",
+      "detectAt": "2026-09-22T09:27:29.972Z",
+      "detectStatus": 200
+    },
+    {
+      "title": "tag-pricing-calculator-vpro",
+      "desc": "标签定价计算器 VPro 版。",
+      "repo": "https://github.com/Ri1035/tag-pricing-calculator-vpro",
+      "homepage": "",
+      "preview": "",
+      "status": "source",
+      "tags": [
+        "计算器"
+      ],
+      "account": "手动录入",
+      "accountUsername": "",
+      "language": "",
+      "updated_at": "2026-09-22T09:27:29.972Z",
+      "cfUrl": "",
+      "detectAt": "2026-09-22T09:27:29.972Z",
+      "detectStatus": 0
+    },
+    {
+      "title": "tag-pricing-calculator",
+      "desc": "标签定价计算器。",
+      "repo": "https://github.com/Ri1035/tag-pricing-calculator",
+      "homepage": "",
+      "preview": "",
+      "status": "source",
+      "tags": [
+        "计算器"
+      ],
+      "account": "手动录入",
+      "accountUsername": "",
+      "language": "",
+      "updated_at": "2026-09-22T09:27:29.972Z",
+      "cfUrl": "",
+      "detectAt": "2026-09-22T09:27:29.972Z",
+      "detectStatus": 0
+    },
+    {
+      "title": "拼多多 SKU 监控",
+      "desc": "拼多多商家自研 SKU 库存监控工作台（官方合规，区分现货/定制，库存预警）。",
+      "repo": "https://github.com/Ri1035/pdd-sku-monitor",
+      "homepage": "",
+      "preview": "",
+      "status": "source",
+      "tags": [
+        "拼多多",
+        "库存监控"
+      ],
+      "account": "手动录入",
+      "accountUsername": "",
+      "language": "",
+      "updated_at": "2026-09-22T09:27:29.972Z",
+      "cfUrl": "",
+      "detectAt": "2026-09-22T09:27:29.972Z",
+      "detectStatus": 0
+    },
+    {
+      "title": "KOKA FAMILY 官网",
+      "desc": "KOKA FAMILY 品牌官网 · 奶油糖果风单页站点。",
+      "repo": "https://github.com/Ri1035/koka-family-website",
+      "homepage": "",
+      "preview": "",
+      "status": "source",
+      "tags": [
+        "品牌官网",
+        "落地页"
+      ],
+      "account": "手动录入",
+      "accountUsername": "",
+      "language": "",
+      "updated_at": "2026-09-22T09:27:29.972Z",
+      "cfUrl": "",
+      "detectAt": "2026-09-22T09:27:29.972Z",
+      "detectStatus": 0
     }
   ],
-  "_note": "占位示例数据，用于前端预览。真实数据由 node scripts/detect.mjs 根据 data/entries.json 生成。"
+  "generatedAt": "2026-09-22T09:27:29.972Z"
 }
