@@ -21,8 +21,8 @@
 
   const $ = (sel, root = document) => root.querySelector(sel);
 
-  // 页面模式：index.html 为 "home"（只统计+搜索），works.html 为 "list"
-  const isWorks = location.pathname.endsWith("works.html") || document.getElementById("grid") != null;
+  // 本站为单页：首页即作品集首页，作品在浮层（#works-backdrop）中展示
+  const hasGrid = document.getElementById("grid") != null;
 
   function debounce(fn, ms = 200) {
     let t;
@@ -55,12 +55,11 @@
   }
 
   async function loadProjects(page) {
-    // 首页：只统计总数，不渲染卡片
-    if (!isWorks) {
+    // 首页始终渲染统计；有网格（作品浮层）时完整分页渲染
+    if (!hasGrid) {
       await refreshStats();
       return;
     }
-    // 列表页：完整分页
     const targetPage = page || meta.page || 1;
     try {
       const d = await loadFromApi(targetPage);
@@ -210,26 +209,63 @@
   }
 
   function bindSearch() {
-    // 首页：大搜索跳转到 works.html?q=
-    if (!isWorks) {
-      const hs = $("#home-search-form");
-      const hq = $("#home-q");
-      if (hs && hq) {
-        hs.addEventListener("submit", (e) => {
-          const q = hq.value.trim();
-          e.preventDefault();
-          location.href = "works.html" + (q ? "?q=" + encodeURIComponent(q) : "");
-        });
-      }
-      return;
-    }
-    // 列表页：预填 URL 参数 ?q=
     const urlParams = new URLSearchParams(location.search);
     const initQ = urlParams.get("q");
     const searchBox = $("#search");
+    // 首页大搜索：提交后在作品浮层中展示结果（不再跳转独立页）
+    const hs = $("#home-search-form");
+    const hq = $("#home-q");
+    if (hs && hq) {
+      hs.addEventListener("submit", (e) => {
+        const q = hq.value.trim();
+        e.preventDefault();
+        if (searchBox) searchBox.value = q;
+        openWorks();
+        loadProjects(1);
+      });
+    }
+    const browseBtn = $("#browse-btn");
+    if (browseBtn) browseBtn.addEventListener("click", () => { if (searchBox) searchBox.value = ""; openWorks(); loadProjects(1); });
+    // URL ?q= 预填（兼容分享链接）
     if (initQ && searchBox) { searchBox.value = initQ; }
     if (!searchBox) return;
     searchBox.addEventListener("input", debounce(() => loadProjects(1), 300));
+  }
+
+  /* ---------- 作品浮层（点击顶栏“作品”或搜索后浮出） ---------- */
+  function openWorks() {
+    const bd = $("#works-backdrop");
+    if (!bd) return;
+    bd.classList.add("open");
+    document.body.style.overflow = "hidden";
+    const btn = $("#works-btn");
+    if (btn) btn.setAttribute("aria-expanded", "true");
+  }
+  function closeWorks() {
+    const bd = $("#works-backdrop");
+    if (!bd) return;
+    bd.classList.remove("open");
+    syncScrollLock();
+    const btn = $("#works-btn");
+    if (btn) btn.setAttribute("aria-expanded", "false");
+  }
+  // 任一浮层打开则锁定滚动，否则解锁
+  function syncScrollLock() {
+    const anyOpen = $("#works-backdrop")?.classList.contains("open")
+      || $("#backdrop")?.classList.contains("open")
+      || $("#admin-modal")?.classList.contains("open");
+    document.body.style.overflow = anyOpen ? "hidden" : "";
+  }
+  function bindWorksPanel() {
+    const wb = $("#works-btn");
+    if (wb) wb.addEventListener("click", () => {
+      if ($("#works-backdrop").classList.contains("open")) closeWorks();
+      else openWorks();
+    });
+    document.addEventListener("click", (e) => {
+      if (e.target.closest("[data-works-close]")) { closeWorks(); return; }
+      if (e.target.id === "works-backdrop") closeWorks();
+    });
   }
 
   /* ---------- 分页控件 ---------- */
@@ -294,7 +330,7 @@
       pendingUrl = "";
       frame.removeAttribute("src"); frame.src = "about:blank";
       showGate();
-      document.body.style.overflow = "";
+      syncScrollLock();
     }
 
     if (loadBtn) loadBtn.addEventListener("click", activate);
@@ -322,7 +358,13 @@
         if (e.target === backdrop) close();
       }
     });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") { close(); if ($("#admin-modal").classList.contains("open")) closeAdmin(); } });
+    document.addEventListener("keydown", (e) => {
+       if (e.key === "Escape") {
+         if ($("#backdrop")?.classList.contains("open")) close();
+         if ($("#admin-modal")?.classList.contains("open")) closeAdmin();
+         if ($("#works-backdrop")?.classList.contains("open") && !$("#backdrop")?.classList.contains("open")) closeWorks();
+       }
+     });
     $("#open-now").addEventListener("click", () => {
       const target = pendingUrl && !frame.hidden ? frame.src : pendingUrl;
       if (target && target !== "about:blank") window.open(target, "_blank", "noopener");
@@ -366,7 +408,7 @@
   }
   function closeAdmin() {
     modal().classList.remove("open");
-    document.body.style.overflow = "";
+    syncScrollLock();
     show(adminLogin, true); hide(adminTools); hide(form);
     resetForm();
   }
@@ -546,13 +588,16 @@
     API.initTheme();
     bindTheme();
     bindSearch();
+    bindWorksPanel();
     bindVersion();
-    // 列表页专属（index 首页无这些元素）
-    if (isWorks) {
+    // 单页结构：网格/预览/管理控件都在首页 DOM 中
+    if (hasGrid) {
       bindPreview();
       bindPagination();
       bindAdmin();
     }
     loadProjects(1);
+    // 若带 ?q= 链接则自动打开作品浮层
+    if (new URLSearchParams(location.search).get("q") && $("#grid")) openWorks();
   });
 })();

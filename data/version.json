@@ -1,7 +1,7 @@
 {
   "name": "vibeshowcase",
   "version": "2.1.0",
-  "generatedAt": "2026-09-22T10:46:34.497Z",
+  "generatedAt": "2026-09-22T10:58:18.639Z",
   "changelog": [
     "## 变更",
     "**首页重构**：首页只保留 Hero、统计条与搜索框，作品卡片全部移到独立列表页 `works.html` 分页展示",

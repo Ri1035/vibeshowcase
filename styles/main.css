@@ -736,6 +736,44 @@ img {
 }
 
 /* ============================================================
+   作品浮层（单页：点击顶栏“作品”或搜索后浮出）
+   ============================================================ */
+.works-backdrop {
+  padding: var(--space-md);
+}
+.works-backdrop .modal {
+  max-width: 1080px;
+  width: 100%;
+  max-height: 92vh;
+}
+.works-panel .modal-head {
+  flex: none;
+}
+.works-head {
+  flex: none;
+  padding: var(--space-md) var(--space-lg) var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+}
+.works-head .works-search {
+  margin: 0 auto var(--space-sm);
+}
+.works-head .filters {
+  justify-content: center;
+}
+.works-grid {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-lg);
+  min-height: 40vh;
+}
+.works-panel .pagination {
+  flex: none;
+  margin: var(--space-md) 0 var(--space-lg);
+  padding: 0 var(--space-lg);
+}
+
+/* ============================================================
    多端适配（增强响应式）
    ============================================================ */
 /* 触控目标最小尺寸 */
