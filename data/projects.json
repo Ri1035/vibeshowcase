@@ -14,9 +14,9 @@
       "account": "手动录入",
       "accountUsername": "",
       "language": "",
-      "updated_at": "2026-09-24T11:23:53.784Z",
+      "updated_at": "2026-09-24T11:25:42.195Z",
       "cfUrl": "https://photo-toolkit.pages.dev",
-      "detectAt": "2026-09-24T11:23:53.784Z",
+      "detectAt": "2026-09-24T11:25:42.195Z",
       "detectStatus": 200
     },
     {
@@ -33,9 +33,9 @@
       "account": "手动录入",
       "accountUsername": "",
       "language": "",
-      "updated_at": "2026-09-24T11:23:56.413Z",
+      "updated_at": "2026-09-24T11:25:42.794Z",
       "cfUrl": "https://vectorkit.pages.dev",
-      "detectAt": "2026-09-24T11:23:56.413Z",
+      "detectAt": "2026-09-24T11:25:42.794Z",
       "detectStatus": 200
     },
     {
@@ -52,9 +52,9 @@
       "account": "手动录入",
       "accountUsername": "",
       "language": "",
-      "updated_at": "2026-09-24T11:23:59.261Z",
+      "updated_at": "2026-09-24T11:25:43.431Z",
       "cfUrl": "https://pdd-workbench-9of.pages.dev",
-      "detectAt": "2026-09-24T11:23:59.261Z",
+      "detectAt": "2026-09-24T11:25:43.431Z",
       "detectStatus": 200
     },
     {
@@ -72,9 +72,9 @@
       "account": "手动录入",
       "accountUsername": "",
       "language": "",
-      "updated_at": "2026-09-24T11:24:00.096Z",
+      "updated_at": "2026-09-24T11:25:44.230Z",
       "cfUrl": "https://rainy-magic-street.pages.dev",
-      "detectAt": "2026-09-24T11:24:00.096Z",
+      "detectAt": "2026-09-24T11:25:44.230Z",
       "detectStatus": 200
     },
     {
@@ -92,9 +92,9 @@
       "account": "手动录入",
       "accountUsername": "",
       "language": "",
-      "updated_at": "2026-09-24T11:24:04.158Z",
+      "updated_at": "2026-09-24T11:25:45.259Z",
       "cfUrl": "https://rainy-convenience-store.pages.dev",
-      "detectAt": "2026-09-24T11:24:04.158Z",
+      "detectAt": "2026-09-24T11:25:45.259Z",
       "detectStatus": 200
     },
     {
@@ -112,9 +112,9 @@
       "account": "手动录入",
       "accountUsername": "",
       "language": "",
-      "updated_at": "2026-09-24T11:24:05.576Z",
+      "updated_at": "2026-09-24T11:25:45.889Z",
       "cfUrl": "https://rainy-konbini.pages.dev",
-      "detectAt": "2026-09-24T11:24:05.576Z",
+      "detectAt": "2026-09-24T11:25:45.889Z",
       "detectStatus": 200
     },
     {
@@ -131,9 +131,9 @@
       "account": "手动录入",
       "accountUsername": "",
       "language": "",
-      "updated_at": "2026-09-24T11:24:06.224Z",
+      "updated_at": "2026-09-24T11:25:48.531Z",
       "cfUrl": "https://box-wms.pages.dev",
-      "detectAt": "2026-09-24T11:24:06.224Z",
+      "detectAt": "2026-09-24T11:25:48.531Z",
       "detectStatus": 200
     },
     {
@@ -150,9 +150,9 @@
       "account": "手动录入",
       "accountUsername": "",
       "language": "",
-      "updated_at": "2026-09-24T11:24:11.127Z",
+      "updated_at": "2026-09-24T11:25:51.348Z",
       "cfUrl": "https://pingtu-ch8.pages.dev",
-      "detectAt": "2026-09-24T11:24:11.127Z",
+      "detectAt": "2026-09-24T11:25:51.348Z",
       "detectStatus": 200
     },
     {
@@ -168,9 +168,9 @@
       "account": "手动录入",
       "accountUsername": "",
       "language": "",
-      "updated_at": "2026-09-24T11:24:11.127Z",
+      "updated_at": "2026-09-24T11:25:51.348Z",
       "cfUrl": "",
-      "detectAt": "2026-09-24T11:24:11.127Z",
+      "detectAt": "2026-09-24T11:25:51.348Z",
       "detectStatus": 0
     },
     {
@@ -186,9 +186,9 @@
       "account": "手动录入",
       "accountUsername": "",
       "language": "",
-      "updated_at": "2026-09-24T11:24:11.127Z",
+      "updated_at": "2026-09-24T11:25:51.348Z",
       "cfUrl": "",
-      "detectAt": "2026-09-24T11:24:11.127Z",
+      "detectAt": "2026-09-24T11:25:51.348Z",
       "detectStatus": 0
     },
     {
@@ -205,9 +205,9 @@
       "account": "手动录入",
       "accountUsername": "",
       "language": "",
-      "updated_at": "2026-09-24T11:24:11.127Z",
+      "updated_at": "2026-09-24T11:25:51.348Z",
       "cfUrl": "",
-      "detectAt": "2026-09-24T11:24:11.127Z",
+      "detectAt": "2026-09-24T11:25:51.348Z",
       "detectStatus": 0
     },
     {
@@ -224,11 +224,49 @@
       "account": "手动录入",
       "accountUsername": "",
       "language": "",
-      "updated_at": "2026-09-24T11:24:11.127Z",
+      "updated_at": "2026-09-24T11:25:51.348Z",
       "cfUrl": "",
-      "detectAt": "2026-09-24T11:24:11.127Z",
+      "detectAt": "2026-09-24T11:25:51.348Z",
+      "detectStatus": 0
+    },
+    {
+      "title": "WebPet 互动宠物",
+      "desc": "抽帧序列 + 鼠标跟随互动页。",
+      "repo": "https://github.com/Ri1035/WebPet",
+      "homepage": "",
+      "preview": "",
+      "status": "source",
+      "tags": [
+        "互动",
+        "动画"
+      ],
+      "account": "手动录入",
+      "accountUsername": "",
+      "language": "",
+      "updated_at": "2026-09-24T11:25:51.348Z",
+      "cfUrl": "",
+      "detectAt": "2026-09-24T11:25:51.348Z",
+      "detectStatus": 0
+    },
+    {
+      "title": "VideoKit 视频工具箱",
+      "desc": "纯前端在线视频工具箱：53 个视频/音频处理工具，基于 ffmpeg.wasm，浏览器本地处理。",
+      "repo": "https://github.com/Ri1035/videokit-clone",
+      "homepage": "",
+      "preview": "",
+      "status": "source",
+      "tags": [
+        "视频工具",
+        "ffmpeg"
+      ],
+      "account": "手动录入",
+      "accountUsername": "",
+      "language": "",
+      "updated_at": "2026-09-24T11:25:51.348Z",
+      "cfUrl": "",
+      "detectAt": "2026-09-24T11:25:51.348Z",
       "detectStatus": 0
     }
   ],
-  "generatedAt": "2026-09-24T11:24:11.127Z"
+  "generatedAt": "2026-09-24T11:25:51.348Z"
 }
